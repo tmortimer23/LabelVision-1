@@ -1,0 +1,5 @@
+person
+no-mask
+mask
+improper-mask
+cant-tell-mask
