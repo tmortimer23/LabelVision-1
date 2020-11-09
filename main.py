@@ -15,35 +15,6 @@ MIN_HEIGHT = 10
 SELECTED_CLASS = 0
 selected_class_indexes = [i for i in range(len(CLASSES))]
 selected_class_indexes_as_strs = [str(index + 1) for index in selected_class_indexes] #used for easy indexing
-"""
-#Get Directory to explode from user dialogue================
-print("requesting video directory to annotate..")
-root = tk.Tk()
-root.withdraw()
-file_path = tk.filedialog.askdirectory()
-print("selected...", file_path)
-
-
-root = tk.Tk()
-
-def key(event):
-    print("pressed", event.char)
-    if event.char in selected_class_indexes_as_strs:
-        selected_class = int(event.char) - 1
-        print("Updating class to ", selected_class, classes[selected_class])
-
-def callback(event):
-    #frame.focus_set()
-    print("clicked at", event.x, event.y)
-
-#top = tk.Toplevel()
-# Code to add widgets will go here...
-
-
-#frame = top.Frame(top, width=100, height=100)
-#frame.pack()
-"""
-
 
 class ImageCanvas(tk.Canvas):
     def __init__(self, *args, **kwargs):
@@ -64,7 +35,6 @@ class ImageCanvas(tk.Canvas):
         self.new_label_temporary_text = None
         self.editing = False
 
-        #TODO: Why is default image not loading?
         self.image_filename = DEFAULT_IMAGE_FILENAME
         self.resizeable_image = Image.open(self.image_filename)
         self.resizeable_image = self.resizeable_image.resize((1200, 800), Image.ANTIALIAS)
@@ -110,9 +80,10 @@ class ImageCanvas(tk.Canvas):
     def load_labels(self, image_filename, existing_labels):
         #check if label file exists
         label_filename = os.path.splitext(image_filename)[0] + ".txt"
+        self.clear_labels() #delete this line if you want to have labels roll over from previous frame
         if os.path.exists(label_filename):
             print("Loading existing labels for", image_filename)
-            self.clear_labels()
+            #MOVE HERE self.clear_labels() if you want to keep the previous frames labels
             #draw labels from file onto canvas
             with open(label_filename, "r") as yolo_label_file:
                 yolo_labels = yolo_label_file.read().splitlines()
@@ -143,10 +114,6 @@ class ImageCanvas(tk.Canvas):
         self.resizeable_image = Image.open(self.image_filename).resize((self.width, self.height), Image.ANTIALIAS)
         self.resized_photoimage = ImageTk.PhotoImage(self.resizeable_image)
         self.itemconfig(self.image_on_canvas, image=self.resized_photoimage)
-
-
-
-
 
     def cancel(self): #Captured by Root bind_all method
         print("Cancelled Executed...")
