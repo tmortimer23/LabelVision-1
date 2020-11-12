@@ -10,8 +10,7 @@ DEFAULT_IMAGE_FILENAME = "load_dir.png"
 with open("classes.txt") as classes_file:
     CLASSES = classes_file.read().splitlines()
 COLORS = ["yellow", "red", "green", "orange", "gray", "pink", "purple", "tan", "olive"]
-MIN_WIDTH = 10
-MIN_HEIGHT = 10
+
 SELECTED_CLASS = 0
 selected_class_indexes = [i for i in range(len(CLASSES))]
 selected_class_indexes_as_strs = [str(index + 1) for index in selected_class_indexes] #used for easy indexing
@@ -177,17 +176,16 @@ class ImageCanvas(tk.Canvas):
             x2,y2 = self.new_label_released_xy
             x2 =  min(max(x2, 0), self.winfo_width()) #Don't go out of bounds
             y2 =  min(max(y2, 0), self.winfo_width())
-            if abs(x2 -x1) > MIN_WIDTH and abs(y2- y1) > MIN_HEIGHT:
-                #Note: top left is (0,0), bottom right is (1,1)
-                self.new_label_box = self.create_rectangle(x1,y1,x2,y2, fill="", outline=COLORS[SELECTED_CLASS])
-                self.new_label_text = self.create_text(x1, y1 - 5, fill=COLORS[SELECTED_CLASS], text=CLASSES[SELECTED_CLASS])
-                bounding_box = (min(x1,x2)/ self.winfo_width(), min(y1,y2)/self.winfo_height(), max(x1,x2)/self.winfo_width(), max(y1,y2)/self.winfo_height())
-                new_label = (bounding_box,CLASSES[SELECTED_CLASS],self.new_label_box,self.new_label_text)
-                print("added", bounding_box, CLASSES[SELECTED_CLASS])
-                self.labels.append(new_label)
-                self.delete(self.new_label_temporary_box)
-                self.delete(self.new_label_temporary_text)
-                self.addtag_all("all")
+            #Note: top left is (0,0), bottom right is (1,1)
+            self.new_label_box = self.create_rectangle(x1,y1,x2,y2, fill="", outline=COLORS[SELECTED_CLASS])
+            self.new_label_text = self.create_text(x1, y1 - 5, fill=COLORS[SELECTED_CLASS], text=CLASSES[SELECTED_CLASS])
+            bounding_box = (min(x1,x2)/ self.winfo_width(), min(y1,y2)/self.winfo_height(), max(x1,x2)/self.winfo_width(), max(y1,y2)/self.winfo_height())
+            new_label = (bounding_box,CLASSES[SELECTED_CLASS],self.new_label_box,self.new_label_text)
+            print("added", bounding_box, CLASSES[SELECTED_CLASS])
+            self.labels.append(new_label)
+            self.delete(self.new_label_temporary_box)
+            self.delete(self.new_label_temporary_text)
+            self.addtag_all("all")
         self.new_label_released_xy = None
         self.new_label_clicked_xy = None
         self.new_label_temporary_box = None
