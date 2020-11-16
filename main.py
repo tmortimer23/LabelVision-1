@@ -71,7 +71,6 @@ class ImageCanvas(tk.Canvas):
             self.delete(text_id)
         self.labels = []
 
-    #STEPHEN MOSS ADDITION
     def clear_last_label(self):
         if self.labels:
             bb, class_name, bb_id, text_id = self.labels[-1]
@@ -299,7 +298,6 @@ class App(tk.Tk):
             cross_hair_color = "red" if self.frame_canvas.editing else "black"
             self.frame_canvas.itemconfig(self.frame_canvas.horizontal_dash_line, fill=cross_hair_color)
             self.frame_canvas.itemconfig(self.frame_canvas.vertical_dash_line, fill=cross_hair_color)
-        #STEPHEN MOSS ADDITION
         elif event.char == "z":
             print("Deleting last box...");
             self.frame_canvas.clear_last_label()
