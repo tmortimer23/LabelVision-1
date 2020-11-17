@@ -16,7 +16,7 @@ selected_class_indexes = [i for i in range(len(CLASSES))]
 selected_class_indexes_as_strs = [str(index + 1) for index in selected_class_indexes] #used for easy indexing
 
 CROSS_HAIR_COLORS = ["black", "white"]
-SELECTED_CROSS_HAIR_COLOR = 0
+SELECTED_CROSS_HAIR_COLOR_INDEX = 0
 
 class ImageCanvas(tk.Canvas):
     def __init__(self, *args, **kwargs):
@@ -135,12 +135,12 @@ class ImageCanvas(tk.Canvas):
             self.delete(self.new_label_temporary_box)
             self.delete(self.new_label_temporary_text)
     def update_crosshair(self,event):
-        global SELECTED_CROSS_HAIR_COLOR
+        global SELECTED_CROSS_HAIR_COLOR_INDEX
         if self.horizontal_dash_line:
             self.delete(self.horizontal_dash_line)
         if self.vertical_dash_line:
             self.delete(self.vertical_dash_line)
-        cross_hair_color = "red" if self.editing else CROSS_HAIR_COLORS[SELECTED_CROSS_HAIR_COLOR]
+        cross_hair_color = "red" if self.editing else CROSS_HAIR_COLORS[SELECTED_CROSS_HAIR_COLOR_INDEX]
 
         self.horizontal_dash_line = self.create_line(0, event.y, self.winfo_width(), event.y, fill=cross_hair_color, dash=(5, 2))
         self.vertical_dash_line = self.create_line(event.x, 0, event.x, self.winfo_height(), fill=cross_hair_color, dash=(5, 2))
@@ -297,18 +297,18 @@ class App(tk.Tk):
         elif event.char == "c":
             self.frame_canvas.clear_labels()
         elif event.char == "w":
-            global SELECTED_CROSS_HAIR_COLOR
+            global SELECTED_CROSS_HAIR_COLOR_INDEX
             self.frame_canvas.editing = not self.frame_canvas.editing
-            cross_hair_color = "red" if self.frame_canvas.editing else CROSS_HAIR_COLORS[SELECTED_CROSS_HAIR_COLOR]
+            cross_hair_color = "red" if self.frame_canvas.editing else CROSS_HAIR_COLORS[SELECTED_CROSS_HAIR_COLOR_INDEX]
             self.frame_canvas.itemconfig(self.frame_canvas.horizontal_dash_line, fill=cross_hair_color)
             self.frame_canvas.itemconfig(self.frame_canvas.vertical_dash_line, fill=cross_hair_color)
         elif event.char == "z":
             print("Deleting last box...");
             self.frame_canvas.clear_last_label()
         elif event.char == "f":
-            SELECTED_CROSS_HAIR_COLOR = (SELECTED_CROSS_HAIR_COLOR + 1) % len(CROSS_HAIR_COLORS)
-            print("Changing crosshair to: " + CROSS_HAIR_COLORS[SELECTED_CROSS_HAIR_COLOR]);
-            cross_hair_color = "red" if self.frame_canvas.editing else CROSS_HAIR_COLORS[SELECTED_CROSS_HAIR_COLOR]
+            SELECTED_CROSS_HAIR_COLOR_INDEX = (SELECTED_CROSS_HAIR_COLOR_INDEX + 1) % len(CROSS_HAIR_COLORS)
+            print("Changing crosshair to: " + CROSS_HAIR_COLORS[SELECTED_CROSS_HAIR_COLOR_INDEX]);
+            cross_hair_color = "red" if self.frame_canvas.editing else CROSS_HAIR_COLORS[SELECTED_CROSS_HAIR_COLOR_INDEX]
             self.frame_canvas.itemconfig(self.frame_canvas.horizontal_dash_line, fill=cross_hair_color)
             self.frame_canvas.itemconfig(self.frame_canvas.vertical_dash_line, fill=cross_hair_color)
             
