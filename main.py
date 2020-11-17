@@ -42,6 +42,7 @@ class ImageCanvas(tk.Canvas):
         self.resizeable_image = self.resizeable_image.resize((1200, 800), Image.ANTIALIAS)
         self.resized_photoimage = ImageTk.PhotoImage(self.resizeable_image)
         self.image_on_canvas = self.create_image(0,0, anchor=tk.NW, image=self.resized_photoimage, tag="all")
+        self.config(cursor = 'none')
 
         self.addtag_all("all")
         self.update()
@@ -231,6 +232,7 @@ class App(tk.Tk):
         self.frames = []
         self.file_path = None
         self.current_frame_index = 0
+
 
     @staticmethod
     def center_on_screen(toplevel):
