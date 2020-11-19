@@ -43,6 +43,7 @@ class ImageCanvas(tk.Canvas):
         self.resized_photoimage = ImageTk.PhotoImage(self.resizeable_image)
         self.image_on_canvas = self.create_image(0,0, anchor=tk.NW, image=self.resized_photoimage, tag="all")
         self.config(cursor = 'none')
+        self.rollover_label = False
 
         self.addtag_all("all")
         self.update()
@@ -91,26 +92,37 @@ class ImageCanvas(tk.Canvas):
         label_filename = os.path.splitext(self.image_filename)[0] + ".txt"
         if os.path.exists(label_filename):
             os.remove(label_filename)
-    def load_labels(self, image_filename, existing_labels):
+
+
+    def load_labels(self, image_filename, existing_labels, rollover_label):
         #check if label file exists
         label_filename = os.path.splitext(image_filename)[0] + ".txt"
-        self.clear_labels() #delete this line if you want to have labels roll over from previous frame
-        if os.path.exists(label_filename):
-            print("Loading existing labels for", image_filename)
-            #MOVE HERE self.clear_labels() if you want to keep the previous frames labels
-            #draw labels from file onto canvas
-            with open(label_filename, "r") as yolo_label_file:
-                yolo_labels = yolo_label_file.read().splitlines()
-                for yolo_label in yolo_labels:
-                    class_index, x, y, width, height = yolo_label.split(" ")
-                    class_index = int(class_index)
-                    x, y, width, height = float(x), float(y), float(width), float(height)
-                    class_name = CLASSES[class_index]
-                    bb = [x,y, x+width, y+height]
-                    bb_id = self.create_rectangle(bb[0] * self.winfo_width(),bb[1] * self.winfo_height() ,bb[2] * self.winfo_width(),bb[3] * self.winfo_height(), fill="", outline=COLORS[class_index])
-                    new_label_text_id = self.create_text(x * self.winfo_width(), (y * self.winfo_height()) - 5, fill=COLORS[class_index], text=class_name)
-                    self.labels.append([bb,class_name,bb_id, new_label_text_id])
-        print("labels:")
+        #self.clear_labels() #delete this line if you want to have labels roll over from previous frame
+        print(f"Rollover label: {self.rollover_label}")
+      
+       
+        if self.rollover_label == False:
+            self.clear_labels()
+
+        if len(self.labels) > 0:
+            print ("labels exist, no need to overwrite")
+        else:
+            if os.path.exists(label_filename):
+                    print("Loading existing labels for", image_filename)
+                        #MOVE HERE self.clear_labels() if you want to keep the previous frames labels
+                        #draw labels from file onto canvas
+                    with open(label_filename, "r") as yolo_label_file:
+                        yolo_labels = yolo_label_file.read().splitlines()
+                        for yolo_label in yolo_labels:
+                            class_index, x, y, width, height = yolo_label.split(" ")
+                            class_index = int(class_index)
+                            x, y, width, height = float(x), float(y), float(width), float(height)
+                            class_name = CLASSES[class_index]
+                            bb = [x,y, x+width, y+height]
+                            bb_id = self.create_rectangle(bb[0] * self.winfo_width(),bb[1] * self.winfo_height() ,bb[2] * self.winfo_width(),bb[3] * self.winfo_height(), fill="", outline=COLORS[class_index])
+                            new_label_text_id = self.create_text(x * self.winfo_width(), (y * self.winfo_height()) - 5, fill=COLORS[class_index], text=class_name)
+                            self.labels.append([bb,class_name,bb_id, new_label_text_id])
+                            print("labels:")
         for label in self.labels:
             print(label)
 
@@ -123,7 +135,7 @@ class ImageCanvas(tk.Canvas):
             else:
                 print("removing labels", self.image_filename)
                 self.delete_label_file()
-        self.load_labels(filename, self.labels)
+        self.load_labels(filename, self.labels, self.rollover_label)
         self.image_filename = filename
         self.resizeable_image = Image.open(self.image_filename).resize((self.width, self.height), Image.ANTIALIAS)
         self.resized_photoimage = ImageTk.PhotoImage(self.resizeable_image)
@@ -307,6 +319,13 @@ class App(tk.Tk):
         elif event.char == "z":
             print("Deleting last box...");
             self.frame_canvas.clear_last_label()
+        elif event.char == "r":
+            self.frame_canvas.rollover_label = True
+            print(f"r pressed rollover is now {self.frame_canvas.rollover_label}")
+        elif event.char == "t":
+            self.frame_canvas.rollover_label = False
+
+
         elif event.char == "f":
             SELECTED_CROSS_HAIR_COLOR_INDEX = (SELECTED_CROSS_HAIR_COLOR_INDEX + 1) % len(CROSS_HAIR_COLORS)
             print("Changing crosshair to: " + CROSS_HAIR_COLORS[SELECTED_CROSS_HAIR_COLOR_INDEX]);
