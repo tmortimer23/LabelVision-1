@@ -43,7 +43,7 @@ class ImageCanvas(tk.Canvas):
         self.resized_photoimage = ImageTk.PhotoImage(self.resizeable_image)
         self.image_on_canvas = self.create_image(0,0, anchor=tk.NW, image=self.resized_photoimage, tag="all")
         self.config(cursor = 'none')
-        self.rollover_label = False
+        self.rollingover_label = False
 
         self.addtag_all("all")
         self.update()
@@ -94,14 +94,13 @@ class ImageCanvas(tk.Canvas):
             os.remove(label_filename)
 
 
-    def load_labels(self, image_filename, existing_labels, rollover_label):
+    def load_labels(self, image_filename):
         #check if label file exists
         label_filename = os.path.splitext(image_filename)[0] + ".txt"
         #self.clear_labels() #delete this line if you want to have labels roll over from previous frame
-        print(f"Rollover label: {self.rollover_label}")
-      
+        print("Rollingover label:", self.rollingover_label)      
        
-        if self.rollover_label == False:
+        if self.rollingover_label == False:
             self.clear_labels()
 
         if len(self.labels) > 0:
@@ -135,7 +134,7 @@ class ImageCanvas(tk.Canvas):
             else:
                 print("removing labels", self.image_filename)
                 self.delete_label_file()
-        self.load_labels(filename, self.labels, self.rollover_label)
+        self.load_labels(filename)
         self.image_filename = filename
         self.resizeable_image = Image.open(self.image_filename).resize((self.width, self.height), Image.ANTIALIAS)
         self.resized_photoimage = ImageTk.PhotoImage(self.resizeable_image)
@@ -320,10 +319,8 @@ class App(tk.Tk):
             print("Deleting last box...");
             self.frame_canvas.clear_last_label()
         elif event.char == "r":
-            self.frame_canvas.rollover_label = True
-            print(f"r pressed rollover is now {self.frame_canvas.rollover_label}")
-        elif event.char == "t":
-            self.frame_canvas.rollover_label = False
+            self.frame_canvas.rollingover_label = not self.frame_canvas.rollingover_label
+            print("r pressed rollover is now", self.frame_canvas.rollingover_label)
 
 
         elif event.char == "f":
